@@ -1,8 +1,6 @@
 package br.thullyoo.desafio_backend_java.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,6 +11,10 @@ import java.math.BigDecimal;
 public class Empresa {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @Column(unique = true)
     private String cnpj;
 
     private String nome;

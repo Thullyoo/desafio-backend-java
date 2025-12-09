@@ -1,9 +1,6 @@
 package br.thullyoo.desafio_backend_java.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -12,6 +9,10 @@ import lombok.Data;
 public class Cliente {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @Column(unique = true, nullable = false)
     private String cpf;
 
     private String nome;
