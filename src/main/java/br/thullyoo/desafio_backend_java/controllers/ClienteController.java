@@ -2,7 +2,9 @@ package br.thullyoo.desafio_backend_java.controllers;
 
 import br.thullyoo.desafio_backend_java.dto.AderirEmpresaRequest;
 import br.thullyoo.desafio_backend_java.dto.ClientRequest;
+import br.thullyoo.desafio_backend_java.dto.TransferenciaRequest;
 import br.thullyoo.desafio_backend_java.model.Cliente;
+import br.thullyoo.desafio_backend_java.model.Empresa;
 import br.thullyoo.desafio_backend_java.services.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +32,12 @@ public class ClienteController {
         Cliente cliente =  clientService.aderirEmpresa(aderirEmpresaRequest);
 
         return ResponseEntity.ok(cliente);
+    }
+
+    @PostMapping("/transferir")
+    public ResponseEntity<Empresa> transferir(@RequestBody @Valid TransferenciaRequest transferenciaRequest){
+        Empresa empresa =  clientService.transferir(transferenciaRequest);
+
+        return ResponseEntity.ok(empresa);
     }
 }
