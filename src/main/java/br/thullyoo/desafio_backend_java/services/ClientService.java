@@ -1,5 +1,6 @@
 package br.thullyoo.desafio_backend_java.services;
 
+import br.thullyoo.desafio_backend_java.dto.AderirEmpresaRequest;
 import br.thullyoo.desafio_backend_java.dto.ClientRequest;
 import br.thullyoo.desafio_backend_java.model.Cliente;
 import br.thullyoo.desafio_backend_java.model.Empresa;
@@ -41,13 +42,13 @@ public class ClientService {
         return cliente;
     }
 
-    public Cliente aderirEmpresa(String cpf, String cnpj){
-        Optional<Cliente> cliente =  clienteRepository.findByCpf(cpf);
+    public Cliente aderirEmpresa(AderirEmpresaRequest aderirEmpresaRequest){
+        Optional<Cliente> cliente =  clienteRepository.findByCpf(aderirEmpresaRequest.cpf());
         if (cliente.isEmpty()){
             throw new RuntimeException("Cliente não encontrado");
         }
-        if (cliente.get().getEmpresa() != null){
-            Optional<Empresa> empresa = empresaRepository.findByCnpj(cnpj);
+        if (cliente.get().getEmpresa() == null){
+            Optional<Empresa> empresa = empresaRepository.findByCnpj(aderirEmpresaRequest.cnpj());
             if (empresa.isEmpty()){
                 throw new RuntimeException("Empresa não encontrada");
             }

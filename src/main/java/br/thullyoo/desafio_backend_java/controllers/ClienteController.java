@@ -1,14 +1,12 @@
 package br.thullyoo.desafio_backend_java.controllers;
 
+import br.thullyoo.desafio_backend_java.dto.AderirEmpresaRequest;
 import br.thullyoo.desafio_backend_java.dto.ClientRequest;
 import br.thullyoo.desafio_backend_java.model.Cliente;
 import br.thullyoo.desafio_backend_java.services.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cliente")
@@ -27,4 +25,10 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
+    @PostMapping("/aderirEmpresa")
+    public ResponseEntity<Cliente> aderirEmpresa(@RequestBody @Valid AderirEmpresaRequest aderirEmpresaRequest){
+        Cliente cliente =  clientService.aderirEmpresa(aderirEmpresaRequest);
+
+        return ResponseEntity.ok(cliente);
+    }
 }
