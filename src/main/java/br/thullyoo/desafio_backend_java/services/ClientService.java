@@ -2,6 +2,7 @@ package br.thullyoo.desafio_backend_java.services;
 
 import br.thullyoo.desafio_backend_java.dto.AderirEmpresaRequest;
 import br.thullyoo.desafio_backend_java.dto.ClientRequest;
+import br.thullyoo.desafio_backend_java.dto.SaqueRequest;
 import br.thullyoo.desafio_backend_java.dto.TransferenciaRequest;
 import br.thullyoo.desafio_backend_java.model.Cliente;
 import br.thullyoo.desafio_backend_java.model.Empresa;
@@ -60,7 +61,7 @@ public class ClientService {
         return cliente.get();
     }
 
-    public Empresa transferir(TransferenciaRequest transferenciaRequest) {
+    public Empresa depositar(TransferenciaRequest transferenciaRequest) {
         Optional<Cliente> clienteOpt = clienteRepository.findByCpf(transferenciaRequest.cpf());
 
         if (clienteOpt.isEmpty()) {
@@ -79,7 +80,49 @@ public class ClientService {
 
         Empresa empresa = cliente.getEmpresa();
 
-        BigDecimal novoSaldo = empresa.getSaldo().add(transferenciaRequest.valor());
+        BigDecimal valor = transferenciaRequest.valor();
+        BigDecimal taxa = empresa.getTaxa();
+        BigDecimal valorLiquido = valor.subtract(taxa);
+
+        if (valorLiquido.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("O valor líquido do depósito (valor - taxa) deve ser maior que zero");
+        }
+
+        BigDecimal novoSaldo = empresa.getSaldo().add(valorLiquido);
+        empresa.setSaldo(novoSaldo);
+
+        return empresaRepository.save(empresa);
+    }
+
+
+    public Empresa sacar(SaqueRequest saqueRequest) {
+        Optional<Cliente> clienteOpt = clienteRepository.findByCpf(saqueRequest.cpf());
+
+        if (clienteOpt.isEmpty()) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+
+        Cliente cliente = clienteOpt.get();
+
+        if (cliente.getEmpresa() == null) {
+            throw new RuntimeException("Cliente não associado a alguma empresa");
+        }
+
+        if (saqueRequest.valor() == null || saqueRequest.valor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("O valor deve ser maior que zero");
+        }
+
+        Empresa empresa = cliente.getEmpresa();
+
+        BigDecimal valor = saqueRequest.valor();
+        BigDecimal taxa = empresa.getTaxa();
+        BigDecimal total = valor.add(taxa);
+
+        if (empresa.getSaldo().compareTo(total) < 0) {
+            throw new RuntimeException("Saldo insuficiente para saque (valor + taxa)");
+        }
+
+        BigDecimal novoSaldo = empresa.getSaldo().subtract(total);
         empresa.setSaldo(novoSaldo);
 
         return empresaRepository.save(empresa);
