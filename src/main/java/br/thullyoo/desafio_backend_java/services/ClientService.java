@@ -2,12 +2,14 @@ package br.thullyoo.desafio_backend_java.services;
 
 import br.thullyoo.desafio_backend_java.dto.AderirEmpresaRequest;
 import br.thullyoo.desafio_backend_java.dto.ClientRequest;
+import br.thullyoo.desafio_backend_java.dto.TransferenciaRequest;
 import br.thullyoo.desafio_backend_java.model.Cliente;
 import br.thullyoo.desafio_backend_java.model.Empresa;
 import br.thullyoo.desafio_backend_java.repositories.ClienteRepository;
 import br.thullyoo.desafio_backend_java.repositories.EmpresaRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -57,4 +59,30 @@ public class ClientService {
         clienteRepository.save(cliente.get());
         return cliente.get();
     }
+
+    public Empresa transferir(TransferenciaRequest transferenciaRequest) {
+        Optional<Cliente> clienteOpt = clienteRepository.findByCpf(transferenciaRequest.cpf());
+
+        if (clienteOpt.isEmpty()) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+
+        Cliente cliente = clienteOpt.get();
+
+        if (cliente.getEmpresa() == null) {
+            throw new RuntimeException("Cliente não associado a alguma empresa");
+        }
+
+        if (transferenciaRequest.valor() == null || transferenciaRequest.valor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("O valor deve ser maior que zero");
+        }
+
+        Empresa empresa = cliente.getEmpresa();
+
+        BigDecimal novoSaldo = empresa.getSaldo().add(transferenciaRequest.valor());
+        empresa.setSaldo(novoSaldo);
+
+        return empresaRepository.save(empresa);
+    }
+
 }
