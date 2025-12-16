@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ClienteService {
@@ -40,5 +42,17 @@ public class ClienteService {
             clienteResponses.add(new ClienteResponse(cliente.getName(),cliente.getEmail(),contatoResponses));
         }
         return clienteResponses;
+    }
+
+    public ClienteResponse getCliente(UUID id){
+        Optional<Cliente> cliente =  clienteRepository.findById(id);
+        if (cliente.isEmpty()){
+            throw new RuntimeException("Cliente não registrado");
+        }
+        List<ContatoResponse> contatos = new ArrayList<>();
+        for (Contato contato : cliente.get().getContatos()){
+            contatos.add(new ContatoResponse(contato.getId(),contato.getType(),contato.getValue()));
+        }
+        return new ClienteResponse(cliente.get().getName(),cliente.get().getEmail(), contatos);
     }
 }

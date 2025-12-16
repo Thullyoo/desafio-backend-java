@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/clientes")
@@ -26,5 +27,10 @@ public class ClienteController {
     @GetMapping
     public ResponseEntity<List<ClienteResponse>> getAll(){
         return ResponseEntity.ok(clienteService.getAllClientes());
+    }
+
+    @GetMapping("/{id}/contatos")
+    public ResponseEntity<ClienteResponse> getCliente(@PathVariable("id") UUID id){
+        return ResponseEntity.ok(clienteService.getCliente(id));
     }
 }
