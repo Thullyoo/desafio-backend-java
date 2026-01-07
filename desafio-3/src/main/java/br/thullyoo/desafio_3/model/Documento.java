@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Table(name = "TB_DOCUMENTOS")
@@ -19,9 +20,9 @@ public class Documento {
 
     private String descricao;
 
-    private LocalDate dataInclusao;
+    private LocalDateTime dataInclusao;
 
-    private LocalDate dataAtualizacao;
+    private LocalDateTime dataAtualizacao;
 
     @ManyToOne
     @JoinColumn(name = "beneficiario_id")

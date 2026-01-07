@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Table(name = "TB_BENEFICIARIOS")
@@ -21,7 +22,7 @@ public class Beneficiario {
 
     private LocalDate dataNascimento;
 
-    private LocalDate dataInclusao;
+    private LocalDateTime dataInclusao;
 
-    private LocalDate dataAtualizacao;
+    private LocalDateTime dataAtualizacao;
 }
