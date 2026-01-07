@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 public record DocumentoRequest(
         String tipoDocumento,
-        String descricao,
-        LocalDateTime dataInclusao,
-        LocalDateTime dataAtualizacao
+        String descricao
 ) {
 }

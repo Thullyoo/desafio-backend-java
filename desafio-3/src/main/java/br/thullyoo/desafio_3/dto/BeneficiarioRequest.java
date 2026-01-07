@@ -8,8 +8,6 @@ public record BeneficiarioRequest(
         String nome,
         String telefone,
         LocalDate dataNascimento,
-        LocalDateTime dataInclusao,
-        LocalDateTime dataAtualizacao,
         List<DocumentoRequest> documentos
 ) {
 }
