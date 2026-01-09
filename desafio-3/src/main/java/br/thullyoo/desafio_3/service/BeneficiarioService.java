@@ -1,9 +1,6 @@
 package br.thullyoo.desafio_3.service;
 
-import br.thullyoo.desafio_3.dto.BeneficiarioRequest;
-import br.thullyoo.desafio_3.dto.BeneficiarioResponse;
-import br.thullyoo.desafio_3.dto.DocumentoRequest;
-import br.thullyoo.desafio_3.dto.DocumentoResponse;
+import br.thullyoo.desafio_3.dto.*;
 import br.thullyoo.desafio_3.model.Beneficiario;
 import br.thullyoo.desafio_3.model.Documento;
 import br.thullyoo.desafio_3.repositories.BeneficiarioRepository;
@@ -11,7 +8,6 @@ import br.thullyoo.desafio_3.repositories.DocumentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,5 +45,14 @@ public class BeneficiarioService {
         }
 
         return new BeneficiarioResponse(beneficiario.getId(), beneficiario.getNome(), beneficiario.getTelefone(), beneficiario.getDataNascimento(), beneficiario.getDataInclusao(), beneficiario.getDataAtualizacao(), documentoResponseList);
+    }
+
+    public List<BeneficiarioListResponse> listar(){
+        List<Beneficiario> beneficiarios = beneficiarioRepository.findAll();
+        List<BeneficiarioListResponse> beneficiarioResponses = new ArrayList<>();
+        for (Beneficiario beneficiario : beneficiarios){
+            beneficiarioResponses.add(new BeneficiarioListResponse(beneficiario.getId(), beneficiario.getNome(), beneficiario.getTelefone(), beneficiario.getDataNascimento(), beneficiario.getDataInclusao(), beneficiario.getDataAtualizacao()));
+        }
+        return beneficiarioResponses;
     }
 }
