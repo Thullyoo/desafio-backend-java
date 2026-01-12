@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BeneficiarioService {
@@ -54,5 +56,65 @@ public class BeneficiarioService {
             beneficiarioResponses.add(new BeneficiarioListResponse(beneficiario.getId(), beneficiario.getNome(), beneficiario.getTelefone(), beneficiario.getDataNascimento(), beneficiario.getDataInclusao(), beneficiario.getDataAtualizacao()));
         }
         return beneficiarioResponses;
+    }
+
+    public List<DocumentoResponse> listarDocumetosPorId(UUID id){
+        Optional<Beneficiario> beneficiario =  beneficiarioRepository.findById(id);
+
+        if (beneficiario.isEmpty()){
+            throw new RuntimeException("Beneficiário inexistente");
+        }
+
+        List<Documento> documentos = documentoRepository.findByBeneficiario(beneficiario.get());
+        List<DocumentoResponse> responses =  new ArrayList<>();
+        if (documentos.size() <= 0){
+            return responses;
+        }
+
+        for(Documento documento : documentos){
+            responses.add(new DocumentoResponse(documento.getId(), documento.getTipoDocumento(), documento.getDescricao(), documento.getDataInclusao(), documento.getDataAtualizacao()));
+        }
+
+        return responses;
+    }
+
+    public BeneficiarioListResponse atualizar(UUID beneficiarioId, BeneficiarioRequest request){
+        Optional<Beneficiario> beneficiarioOptional = beneficiarioRepository.findById(beneficiarioId);
+
+        if (beneficiarioOptional.isEmpty()){
+            throw new RuntimeException("Beneficiario não existe");
+        }
+
+        Beneficiario beneficiario = beneficiarioOptional.get();
+
+        if (!request.nome().isBlank()){
+            beneficiario.setNome(request.nome());
+        }
+
+        if (!request.telefone().isBlank()){
+            beneficiario.setTelefone(request.telefone());
+        }
+
+        if (!request.documentos().isEmpty()){
+            for (DocumentoRequest documentoRequest : request.documentos()){
+                Documento documento = new Documento();
+                documento.setDataAtualizacao(LocalDateTime.now());
+                documento.setTipoDocumento(documentoRequest.tipoDocumento());
+                documento.setDataInclusao(LocalDateTime.now());
+                documento.setDescricao(documentoRequest.descricao());
+                documento.setBeneficiario(beneficiario);
+                documentoRepository.save(documento);
+            }
+        }
+
+        if (request.dataNascimento() != null && !request.dataNascimento().toString().isBlank()){
+            beneficiario.setDataNascimento(request.dataNascimento());
+        }
+
+        beneficiario.setDataAtualizacao(LocalDateTime.now());
+
+        beneficiarioRepository.save(beneficiario);
+
+        return new BeneficiarioListResponse(beneficiario.getId(), beneficiario.getNome(), beneficiario.getTelefone(), beneficiario.getDataNascimento(), beneficiario.getDataInclusao(), beneficiario.getDataAtualizacao());
     }
 }
